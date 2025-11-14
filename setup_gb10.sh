@@ -339,9 +339,12 @@ SEARCH_ENGINE=$SEARCH_ENGINE
 # SearXNG Configuration (if using searxng)
 SEARXNG_URL=http://localhost:8888
 
-# Embedding Model (for hybrid/searxng modes)
+# Embedding Configuration
+USE_LOCAL_EMBEDDINGS=$([[ "$MODE" == "hybrid" || "$MODE" == "searxng" ]] && echo "true" || echo "false")
 EMBEDDING_MODEL=BAAI/bge-large-en-v1.5
 EMBEDDING_DEVICE=cuda
+EMBEDDING_BATCH_SIZE=32
+EMBEDDING_NORMALIZE=true
 
 # LLM Configuration
 LLM_TEMPERATURE=0.7

@@ -131,18 +131,27 @@ step3_configure_embeddings() {
     print_step "3/6" "Configuring GB10 Hybrid Embeddings"
 
     if [ "$MODE" = "hybrid" ] || [ "$MODE" = "searxng" ]; then
-        print_info "Setting up local GPU embeddings on GB10..."
+        print_info "Enabling local GPU embeddings on GB10..."
 
-        # Test GB10 hybrid implementation
-        if [ -f "$PROJECT_DIR/GB10_HYBRID_IMPLEMENTATION.py" ]; then
-            python3 "$PROJECT_DIR/GB10_HYBRID_IMPLEMENTATION.py" --check || {
-                print_warning "GB10 check failed, but continuing..."
+        # Enable local embeddings
+        if [ -f "$PROJECT_DIR/enable_local_embeddings.sh" ]; then
+            bash "$PROJECT_DIR/enable_local_embeddings.sh" --force || {
+                print_warning "Failed to enable local embeddings, but continuing..."
             }
+        else
+            print_warning "enable_local_embeddings.sh not found"
+
+            # Fallback: Test GB10 hybrid implementation
+            if [ -f "$PROJECT_DIR/GB10_HYBRID_IMPLEMENTATION.py" ]; then
+                python3 "$PROJECT_DIR/GB10_HYBRID_IMPLEMENTATION.py" --check || {
+                    print_warning "GB10 check failed, but continuing..."
+                }
+            fi
         fi
 
-        print_success "Hybrid embeddings configured"
+        print_success "Local embeddings configured"
     else
-        print_info "Skipping hybrid embeddings (mode: $MODE)"
+        print_info "Skipping local embeddings (mode: $MODE - using cloud)"
     fi
 }
 
